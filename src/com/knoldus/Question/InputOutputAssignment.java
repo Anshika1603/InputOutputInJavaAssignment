@@ -9,6 +9,7 @@ public class InputOutputAssignment {
     static Scanner Input = new Scanner(System.in);
 
     public static void main(String[] args) {
+        //Taking User Input for files name and number of persons
         System.out.println("Enter Input file name: ");
         InputFile = Input.nextLine();
 
@@ -18,22 +19,30 @@ public class InputOutputAssignment {
         System.out.println("Enter the number of Persons: ");
         numberOfPerson=Input.nextInt();
 
+        //Creating input and output files
         File inputfile = new File(InputFile);
         File outputfile = new File(OutputFile);
         try {
             inputfile.createNewFile();
 
+            //Checking if output file already exist and asking user for overriding permission if it does exist.
             if(outputfile.exists())
             {
                 System.out.println("Output File already exists. Do you want to Override? (y/n)");
-                String permission=Input.next();
-                if(permission=="y" || permission=="Y")
+                Character permission=Input.next().charAt(0);
+                if(permission=='y' || permission=='Y')
                 {
                     outputfile.createNewFile();
-                }
-                else if(permission=="n" || permission=="N")
+                } else if (permission=='n' || permission=='N')
                 {
-                    System.out.println("Not Overriding the File");
+                    // Terminating the program with a message if user denies to override
+                    System.out.println("Not Overriding the Output File. The program will Terminate!");
+                    System.exit(0);
+                }
+                else
+                {
+                    System.out.println("Wrong Input! Please try again.");
+                    System.exit(0);
                 }
             }
             else
@@ -42,9 +51,11 @@ public class InputOutputAssignment {
             }
 
         }
-        catch(IOException exception){
+        catch(IOException exception)
+        {
             System.out.println("An error occurred. Try Again!");
         }
+        //Calling methods to perform operations on Input and Output files
         InputFileWrite();
         OutputFileWrite();
     }
@@ -52,18 +63,20 @@ public class InputOutputAssignment {
     private static void InputFileWrite(){
         try
         {
+            //Writing the Name and Age of persons in Input File using BufferedWriter
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(InputFile));
-            for (int indexOfPerson = 0; indexOfPerson < numberOfPerson; indexOfPerson++) {
-                System.out.println("Enter the name of Person ");
+            for (int indexOfPerson = 1; indexOfPerson <= numberOfPerson; indexOfPerson++)
+            {
+                System.out.println("Enter the name of Person "+indexOfPerson);
                 Input.nextLine();
                 String Name = Input.nextLine();
-                System.out.println("Enter the age of Person ");
+                System.out.println("Enter the age of Person "+indexOfPerson);
                 Integer age = Input.nextInt();
                 bufferedWriter.write(Name + ", " + age + "\n");
-
             }
             bufferedWriter.close();
-        }catch(IOException exception)
+        }
+        catch(IOException exception)
         {
             System.out.println("IO Exception occurred");
         }
@@ -76,18 +89,19 @@ public class InputOutputAssignment {
             FileWriter outputFileWriter=new FileWriter(OutputFile);
             String line;
             int sumOfAge = 0;
+            //Reading Name and Age from Input File and writing it into Output File
             while ((line=bufferedReader.readLine()) != null)
             {
-
-                String parts[] = line.split(",");
+                String parts[] = line.split(","); //Splitting Input File line text to get Name and Age
                 String name = parts[0].trim();
                 Integer age = Integer.parseInt(parts[1].trim());
                 sumOfAge += age;
+                // Writing the Name and Age in Output File
                 outputFileWriter.write(name + "(" + age + ")\n");
             }
+            //Calculating Average Age and displaying it on Console as well as the Output File
             Double averageAge= (double) (sumOfAge/numberOfPerson);
             System.out.println("Average age of Persons is: "+averageAge);
-            outputFileWriter.write("The sum of ages is: "+sumOfAge+"\n");
             outputFileWriter.write("Average age of Persons is: "+averageAge);
             outputFileWriter.close();
             inputFileReader.close();
